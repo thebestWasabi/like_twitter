@@ -1,6 +1,7 @@
 package io.khamzin.like_twitter.service;
 
 import io.khamzin.like_twitter.exception.EmailAlreadyTakenException;
+import io.khamzin.like_twitter.exception.UserDoesNotExistException;
 import io.khamzin.like_twitter.model.RegistrationObject;
 import io.khamzin.like_twitter.model.Role;
 import io.khamzin.like_twitter.model.UserEntity;
@@ -17,6 +18,20 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
+
+
+    public UserEntity getUserByUsername(String username) {
+        return userRepository.findByUsername(username)
+                .orElseThrow(UserDoesNotExistException::new);
+    }
+
+    public UserEntity updateUser(UserEntity user) {
+        try {
+            return userRepository.save(user);
+        } catch (Exception e) {
+            throw new EmailAlreadyTakenException();
+        }
+    }
 
     public UserEntity registerUser(RegistrationObject ro) {
         UserEntity user = new UserEntity();
